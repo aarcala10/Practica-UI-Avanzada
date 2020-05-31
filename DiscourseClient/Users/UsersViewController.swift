@@ -11,16 +11,26 @@ import UIKit
 class UsersViewController: UIViewController {
     let viewModel: UsersViewModel
 
-    lazy var tableView: UITableView = {
-        let table = UITableView(frame: .zero, style: .grouped)
-        table.translatesAutoresizingMaskIntoConstraints = false
-        table.dataSource = self
-        table.delegate = self
-        table.register(UINib(nibName: "UserCell", bundle: nil), forCellReuseIdentifier: "UserCell")
-        table.estimatedRowHeight = 100
-        table.rowHeight = UITableView.automaticDimension
-        return table
+    lazy var collectionView: UICollectionView = {
+        let collection = UICollectionView(frame: CGRect.zero, collectionViewLayout: UICollectionViewFlowLayout.init())
+        let layout:UICollectionViewFlowLayout = UICollectionViewFlowLayout.init()
+        collection.translatesAutoresizingMaskIntoConstraints = false
+        collection.backgroundColor = .white82
+        collection.dataSource = self
+        collection.delegate = self
+        collection.register(UINib(nibName: "UserCell", bundle: nil), forCellWithReuseIdentifier: "UserCell")
+        
+        return collection
     }()
+    
+    lazy var refreshControl: UIRefreshControl = {
+        let refreshControl = UIRefreshControl()
+        refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
+        refreshControl.addTarget(self, action: #selector(refreshControlPulled), for: .valueChanged)
+        return refreshControl
+        
+    }()
+
 
     init(viewModel: UsersViewModel) {
         self.viewModel = viewModel
@@ -35,18 +45,27 @@ class UsersViewController: UIViewController {
         view = UIView()
         view.backgroundColor = .white
 
-        view.addSubview(tableView)
+        view.addSubview(collectionView)
         NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: view.topAnchor),
-            tableView.leftAnchor.constraint(equalTo: view.leftAnchor),
-            tableView.rightAnchor.constraint(equalTo: view.rightAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            collectionView.topAnchor.constraint(equalTo: view.topAnchor),
+            collectionView.leftAnchor.constraint(equalTo: view.leftAnchor),
+            collectionView.rightAnchor.constraint(equalTo: view.rightAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        collectionView.refreshControl = refreshControl
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationController?.navigationBar.largeTitleTextAttributes =
+            [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 34.0, weight: .bold)]
         viewModel.viewWasLoaded()
+    }
+    
+    @objc func refreshControlPulled(){
+        viewModel.viewWasLoaded()
+        
     }
 
     fileprivate func showErrorFetchingUsers() {
@@ -54,36 +73,51 @@ class UsersViewController: UIViewController {
     }
 }
 
-extension UsersViewController: UITableViewDataSource {
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return viewModel.numberOfSections()
-    }
 
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+
+extension UsersViewController: UICollectionViewDataSource {
+
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return viewModel.numberOfRows(in: section)
     }
 
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if let cell = tableView.dequeueReusableCell(withIdentifier: "UserCell", for: indexPath) as? UserCell,
-            let cellViewModel = viewModel.viewModel(at: indexPath) {
-            cell.viewModel = cellViewModel
-            return cell
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+            if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "UserCell", for: indexPath) as? UserCell,
+                let cellViewModel = viewModel.viewModel(at: indexPath) {
+                cell.viewModel = cellViewModel
+                return cell
         }
 
         fatalError()
     }
 }
 
-extension UsersViewController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
+extension UsersViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        collectionView.deselectItem(at: indexPath, animated: true)
         viewModel.didSelectRow(at: indexPath)
     }
 }
 
+extension UsersViewController: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: 94, height: 124)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        return 20.5
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        return UIEdgeInsets(top: 24, left: 26, bottom: 24, right: 26)
+    }
+    
+}
+
 extension UsersViewController: UsersViewModelViewDelegate {
     func usersWereFetched() {
-        tableView.reloadData()
+        collectionView.reloadData()
+        collectionView.refreshControl?.endRefreshing()
     }
 
     func errorFetchingUsers() {

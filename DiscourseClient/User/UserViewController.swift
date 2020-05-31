@@ -71,10 +71,14 @@ class UserViewController: UIViewController {
     lazy var updateNameButton: UIButton = {
         let button = UIButton(type: .system)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("Update Name", for: .normal)
-        button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = .green
+        
+        button.layer.cornerRadius = 8
+        button.layer.borderWidth = 2
+        button.setTitle("Update", for: .normal)
+        button.setTitleColor(.black, for: .normal)
+        button.backgroundColor = .tangerine
         button.addTarget(self, action: #selector(updateNameButtonTapped), for: .touchUpInside)
+        
         return button
     }()
 
@@ -140,12 +144,18 @@ class UserViewController: UIViewController {
         view.addSubview(updateNameButton)
         NSLayoutConstraint.activate([
             updateNameButton.topAnchor.constraint(equalTo: usernameStackView.bottomAnchor, constant: 8),
-            updateNameButton.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+            updateNameButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            updateNameButton.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 16),
+            updateNameButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -16)
+            
         ])
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationController?.navigationBar.largeTitleTextAttributes =
+            [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 34.0, weight: .bold)]
         viewModel.viewWasLoaded()
     }
 

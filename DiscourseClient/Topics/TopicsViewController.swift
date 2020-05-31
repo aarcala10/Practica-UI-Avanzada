@@ -18,10 +18,19 @@ class TopicsViewController: UIViewController {
         table.delegate = self
         table.register(UINib(nibName: "TopicCell", bundle: nil), forCellReuseIdentifier: "TopicCell")
         table.register(UINib(nibName: "WelcomeCell", bundle: nil), forCellReuseIdentifier: "WelcomeCell")
-        
+        table.refreshControl = refreshControl
         
         return table
     }()
+    
+    lazy var refreshControl: UIRefreshControl = {
+        let refreshControl = UIRefreshControl()
+        refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
+        refreshControl.addTarget(self, action: #selector(refreshControlPulled), for: .valueChanged)
+        return refreshControl
+        
+    }()
+    
 
     let viewModel: TopicsViewModel
 
@@ -43,23 +52,42 @@ class TopicsViewController: UIViewController {
             tableView.leftAnchor.constraint(equalTo: view.leftAnchor),
             tableView.rightAnchor.constraint(equalTo: view.rightAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            
         ])
 
-        let rightBarButtonItem: UIBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "plus"), style: .plain, target: self, action: #selector(plusButtonTapped))
-        rightBarButtonItem.tintColor = .black
+        let rightBarButtonItem: UIBarButtonItem = UIBarButtonItem(image: UIImage(imageLiteralResourceName: "icoSearch"), style: .plain, target: self, action: nil)
         navigationItem.rightBarButtonItem = rightBarButtonItem
+        navigationItem.rightBarButtonItem?.tintColor = .pumpkin
+        
+        let addButton = UIButton(type: .custom)
+        addButton.translatesAutoresizingMaskIntoConstraints = false
+        addButton.setImage(UIImage(named: "icoNew"), for: .normal)
+
+        view.addSubview(addButton)
+        NSLayoutConstraint.activate([
+            addButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16.0),
+            addButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -16.0)
+        ])
+        addButton.addTarget(self, action: #selector(plusButtonTapped), for: .touchUpInside)
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        viewModel.viewWasLoaded()
-        self.navigationController?.navigationBar.prefersLargeTitles = true
-        self.navigationController?.navigationBar.largeTitleTextAttributes =
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationController?.navigationBar.largeTitleTextAttributes =
             [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 34.0, weight: .bold)]
+        tableView.refreshControl = refreshControl
+        viewModel.viewWasLoaded()
+        
     }
 
     @objc func plusButtonTapped() {
         viewModel.plusButtonTapped()
+    }
+    
+    @objc func refreshControlPulled(){
+        viewModel.viewWasLoaded()
+        
     }
 
     fileprivate func showErrorFetchingTopicsAlert() {
@@ -118,6 +146,8 @@ extension TopicsViewController: TopicsViewDelegate {
     
     func topicsFetched() {
         tableView.reloadData()
+        tableView.refreshControl?.endRefreshing()
+        
     }
 
     func errorFetchingTopics() {

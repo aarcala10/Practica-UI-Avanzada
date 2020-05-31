@@ -36,6 +36,10 @@ class TopicCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         avatarUser.layer.cornerRadius = 32
+        postCount.tintColor = .black
+        postersNum.tintColor = .black
+        datePost.tintColor = .black
+        topicTitle.tintColor = .black
         topicTitle.font = UIFont.systemFont(ofSize: 17.0, weight: .semibold)
         postCount.font = UIFont.systemFont(ofSize: 14.0, weight: .regular)
         postersNum.font = UIFont.systemFont(ofSize: 14.0, weight: .regular)

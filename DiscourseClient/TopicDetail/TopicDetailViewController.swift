@@ -117,7 +117,7 @@ class TopicDetailViewController: UIViewController {
         deleteTopicButton.isHidden = true
 
         let leftBarButtonItem: UIBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "arrow.left"), style: .plain, target: self, action: #selector(backButtonTapped))
-        leftBarButtonItem.tintColor = .black
+        leftBarButtonItem.tintColor = .pumpkin
         navigationItem.leftBarButtonItem = leftBarButtonItem
     }
 

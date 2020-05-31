@@ -8,15 +8,26 @@
 
 import UIKit
 
-class UserCell: UITableViewCell {
+class UserCell: UICollectionViewCell {
+    
+    @IBOutlet weak var imageView: UIImageView!
+    @IBOutlet weak var nameView: UILabel!
+    
+    
     var viewModel: UserCellViewModel? {
         didSet {
             guard let viewModel = viewModel else { return }
             viewModel.viewDelegate = self
-            
-            textLabel?.text = viewModel.textLabelText
-            imageView?.image = viewModel.userImage
+            imageView.image = viewModel.userImage
+            nameView.text = viewModel.textLabelText
         }
+    }
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        imageView.layer.cornerRadius = 40
+        nameView.font = UIFont.systemFont(ofSize: 15.0, weight: .regular)
+        nameView.tintColor = .black
+    
     }
 }
 

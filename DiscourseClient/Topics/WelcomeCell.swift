@@ -19,6 +19,8 @@ class WelcomeCell: UITableViewCell {
         guard let viewModel = viewModel else { return }
         titleLabel.text = viewModel.titleLabel
         labelDescription.text = viewModel.descriptionLabel
+        titleLabel.tintColor = .black
+        labelDescription.tintColor = .black
         
         }
     }

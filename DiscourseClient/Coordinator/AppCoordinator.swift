@@ -58,15 +58,16 @@ class AppCoordinator: Coordinator {
         
         tabBarController.viewControllers = [topicsNavigationController, usersNavigationController, categoriesNavigationController,]
         
-        tabBarController.tabBar.tintColor = UIColor(named: "pumpkin")
+        tabBarController.tabBar.tintColor = .pumpkin
+        
         
         tabBarController.tabBar.items?[0].title = "Inicio"
-        tabBarController.tabBar.items?[0].image = UIImage(named: "inicioUnselected")?.withRenderingMode(.alwaysOriginal)
-        tabBarController.tabBar.items?[0].selectedImage = UIImage(named: "inicio")?.withRenderingMode(.alwaysOriginal)
-        tabBarController.tabBar.items?[1].image = UIImage(named: "usuariosUnselected")?.withRenderingMode(.alwaysOriginal)
-        tabBarController.tabBar.items?[1].selectedImage = UIImage(named: "usuarios")?.withRenderingMode(.alwaysOriginal)
-        tabBarController.tabBar.items?[2].image = UIImage(named: "ajustesUnselected")?.withRenderingMode(.alwaysOriginal)
-        tabBarController.tabBar.items?[2].selectedImage = UIImage(named: "ajustes")?.withRenderingMode(.alwaysOriginal)
+        tabBarController.tabBar.items?[0].image = UIImage(imageLiteralResourceName: "inicioUnselected")
+        tabBarController.tabBar.items?[0].selectedImage = UIImage(imageLiteralResourceName: "inicio")
+        tabBarController.tabBar.items?[1].image = UIImage(imageLiteralResourceName: "usuariosUnselected")
+        tabBarController.tabBar.items?[1].selectedImage = UIImage(imageLiteralResourceName: "usuarios")
+        tabBarController.tabBar.items?[2].image = UIImage(imageLiteralResourceName: "ajustesUnselected")
+        tabBarController.tabBar.items?[2].selectedImage = UIImage(imageLiteralResourceName: "ajustes")
         
         
 

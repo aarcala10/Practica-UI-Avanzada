@@ -33,6 +33,9 @@ class AddTopicViewController: UIViewController {
     override func loadView() {
         view = UIView()
         view.backgroundColor = .white
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationController?.navigationBar.largeTitleTextAttributes =
+            [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 34.0, weight: .bold)]
 
         view.addSubview(textField)
         NSLayoutConstraint.activate([
@@ -44,8 +47,10 @@ class AddTopicViewController: UIViewController {
         let submitButton = UIButton(type: .system)
         submitButton.translatesAutoresizingMaskIntoConstraints = false
         submitButton.setTitle(NSLocalizedString("Submit", comment: ""), for: .normal)
-        submitButton.backgroundColor = .cyan
-        submitButton.setTitleColor(.white, for: .normal)
+        submitButton.backgroundColor = .pumpkin
+        submitButton.layer.cornerRadius = 8
+        submitButton.layer.borderWidth = 2
+        submitButton.setTitleColor(.black, for: .normal)
         submitButton.addTarget(self, action: #selector(submitButtonTapped), for: .touchUpInside)
 
         view.addSubview(submitButton)
